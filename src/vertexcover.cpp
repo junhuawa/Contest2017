@@ -5,10 +5,9 @@
 #include <stdbool.h>
 #include <iostream>
 #include <vector>
+#include "vertexcover.h"
 using namespace std;
 
-#define MAX_NODE 101
-#define INDEBUG 0
 
 int8_t graph[MAX_NODE][MAX_NODE];//int -> int8_t
 int edges[MAX_NODE], nodes[MAX_NODE], state[MAX_NODE];
@@ -82,7 +81,7 @@ void init_env(int num){
 
 void print_edges(int num)
 {
-    int i, j;
+    int i;
     printf("edges number: %d\n", num);
     for(i=1; i<=num; i++) {
         printf("%d ", edges[i]);
@@ -156,17 +155,33 @@ int get_standalone_nodes_number(int num){
     return count;
 }
 
-void remove_the_link(int i, int j){
+void remove_the_link_immediate(int i, int j){
     graph[i][j] = 0;
     graph[j][i] = 0; 
     edges[i] --;
     edges[j] --;
 }
 
+void remove_the_link_in_backup(int i, int j, int *backup){
+    graph[i][j] = 0;
+    graph[j][i] = 0; 
+    backup[i] --;
+    backup[j] --;
+}
+
+int find_link_another_node(int j, int num){
+    for(int i=1; i<= num; i++){
+        if(graph[j][i] == 1){
+            return i;
+        }
+    }
+    return 0;
+}
+
 bool find_link_another_node_and_remove(int j, int num){
     for(int i=1; i<= num; i++){
         if((graph[j][i] == 1) && (edges[i] == 1)){
-            remove_the_link(i, j);
+            remove_the_link_immediate(i, j);
             return true;
         }
     }
@@ -174,7 +189,6 @@ bool find_link_another_node_and_remove(int j, int num){
 }
 
 int get_one_link_nodes_number(int num){
-    int j;
     int count = 0;
 
     for(int i=1; i<=num; i++){
@@ -184,6 +198,43 @@ int get_one_link_nodes_number(int num){
             }
         }
     }
+    return count;
+}
+
+int remove_links_of(int j, int num, int backup[]){
+    int count = 0;
+
+    for(int i=1; i<= num; i++){
+
+        if(graph[i][j] == 1){
+            remove_the_link_in_backup(i, j, backup);
+            count ++;
+        }
+    }
+    return count;
+}
+
+int get_optimal_nodes_number(int num){
+    int j;
+    int count = 0;
+    int links_count = 0;
+    int backup[num + 1];
+    memcpy(backup, edges, sizeof(backup));
+
+    for(int i=1; i<=num; i++){
+        print_cell(num);
+        print_edges(num);
+        if(edges[i] == 1){ 
+            j = find_link_another_node(i, num);
+            if( j == 0) continue;
+            links_count = remove_links_of(j, num, backup);
+            print_edges(num);
+            printf("i: %d Removed links of node: %d, links num: %d\n", i, j, links_count);
+            count ++;
+        }
+        printf("count: %d\n", count);
+    }
+    memcpy(edges, backup, sizeof(backup));
     return count;
 }
 
