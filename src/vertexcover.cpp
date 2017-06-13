@@ -49,7 +49,7 @@ int read_links(char *buf, int num)
 bool nodigit(char *p)
 {
     int i;
-    for(i=0; i<strlen(p); i++) {
+    for(i=0; i<(int)strlen(p); i++) {
         if(isdigit(p[i])!= 0) {
             return false;
         }
@@ -258,11 +258,13 @@ int get_covered_linked_nodes_number(int num)
     sum = links_sum(num);
     while(sum != 0){
         covered_counter += get_one_link_nodes_number(num);
-        printf("covered_counter after one link: %d\n", covered_counter);
+        //printf("covered_counter after one link: %d\n", covered_counter);
         covered_counter += get_optimal_nodes_number(num);
-        printf("covered_nods_counter: %d\n", covered_counter);
+        //printf("covered_nods_counter: %d\n", covered_counter);
         new_sum = links_sum(num);
         if(new_sum == sum){
+            print_cell(num);
+            print_edges(num);
             printf("graph loop encountered\n");
             break;
         }
@@ -272,17 +274,30 @@ int get_covered_linked_nodes_number(int num)
     return covered_counter;
 }
 
+
 #ifndef __UT__
+int get_results()
+{
+    int sum = 0;
+    int num = 0;
+    num = read_data();
+
+    sum = get_standalone_nodes_number(num);
+    sum += get_covered_linked_nodes_number(num);
+
+    return sum;
+}
+
 int main() {
     int i;
     int case_num;
-    int num = 0;
+    int sum = 0;
 
     scanf("%d\n", &case_num);
 
     for(i=0; i<case_num; i++) {
-        num = read_data();
-        printf("Case #%d: %d\n", i+1, num);
+        sum = get_results();
+        printf("Case #%d: %d\n", i+1, sum);
     }
 
     return 0;
