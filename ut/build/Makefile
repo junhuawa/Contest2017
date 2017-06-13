@@ -66,11 +66,11 @@ gtest_main.a : gtest-all.o gtest_main.o
 #question3.o : $(USER_SRC_DIR)/question3.c $(GTEST_HEADERS)
 #	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_SRC_DIR)/question3.c
 
-question4.o : $(USER_SRC_DIR)/question4.cpp $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_SRC_DIR)/question4.cpp
+#question4.o : $(USER_SRC_DIR)/question4.cpp $(GTEST_HEADERS)
+#	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_SRC_DIR)/question4.cpp
 
-#question5.o : $(USER_SRC_DIR)/question5.c $(GTEST_HEADERS)
-#	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_SRC_DIR)/question5.c
+vertexcover.o : $(USER_SRC_DIR)/vertexcover.cpp $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_SRC_DIR)/vertexcover.cpp
 
 
 #Question1Unittest.o : $(CASE_DIR)/Question1Unittest.cpp \
@@ -85,16 +85,16 @@ question4.o : $(USER_SRC_DIR)/question4.cpp $(GTEST_HEADERS)
 #					  $(GTEST_HEADERS)
 #	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(CASE_DIR)/Question3Unittest.cpp
 
-Question4Unittest.o : $(CASE_DIR)/Question4Unittest.cpp \
-					  $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(CASE_DIR)/Question4Unittest.cpp
-
-#Question5Unittest.o : $(CASE_DIR)/Question5Unittest.cpp \
+#Question4Unittest.o : $(CASE_DIR)/Question4Unittest.cpp \
 #					  $(GTEST_HEADERS)
-#	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(CASE_DIR)/Question5Unittest.cpp
+#	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(CASE_DIR)/Question4Unittest.cpp
 
-unittest : question4.o \
-	Question4Unittest.o gtest_main.a
+VertexUnittest.o : $(CASE_DIR)/VertexUnittest.cpp \
+					  $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(CASE_DIR)/VertexUnittest.cpp
+
+unittest : vertexcover.o \
+	VertexUnittest.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@ -D__UT__
 	./unittest
 
