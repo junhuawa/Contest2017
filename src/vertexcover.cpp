@@ -249,6 +249,33 @@ int links_sum(int num){
     return sum;
 }
 
+int find_node_with_max_links(int num){
+    int links = 0;
+    int pos = 0;
+
+    for(int i=1; i<=num; i++){
+        if((edges[i] != 0) && (edges[i] > links)){
+            links = edges[i];
+            pos = i;
+        }
+    }
+    return pos;
+}
+
+int break_the_graph(int num)
+{
+    int i;
+    int backup[num + 1];
+
+    memcpy(backup, edges, sizeof(backup));
+
+    i = find_node_with_max_links(num);
+    remove_links_of(i, num, backup);
+
+    memcpy(edges, backup, sizeof(backup));
+    return 0;
+}
+
 int get_covered_linked_nodes_number(int num)
 {
     int covered_counter;
@@ -263,10 +290,14 @@ int get_covered_linked_nodes_number(int num)
         //printf("covered_nods_counter: %d\n", covered_counter);
         new_sum = links_sum(num);
         if(new_sum == sum){
-            print_cell(num);
-            print_edges(num);
-            printf("graph loop encountered\n");
-            break;
+//           print_cell(num);
+//           print_edges(num);
+            break_the_graph(num);
+            covered_counter += 1;
+ //          print_cell(num);
+ //          print_edges(num);
+            //printf("graph loop encountered\n");
+            //break;
         }
         sum = new_sum;
     }

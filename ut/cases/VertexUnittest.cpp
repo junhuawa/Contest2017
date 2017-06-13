@@ -86,3 +86,13 @@ TEST_F(Question5Test, Get_correct_nodes_number_to_cover) {
     EXPECT_EQ(get_covered_linked_nodes_number(num), 3);
 //    EXPECT_EQ(memcmp(edges, edges_expected, sizeof(edges_expected)), 0);
 }
+
+TEST_F(Question5Test, break_the_graph_success) {
+    int num;
+    int node_num;
+
+    num = read_data("4 1 2 2 3 4 3");
+    node_num = get_covered_linked_nodes_number(num);
+
+    EXPECT_EQ(node_num, 2);
+}
