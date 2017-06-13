@@ -278,30 +278,33 @@ int break_the_graph(int num)
 
 int get_covered_linked_nodes_number(int num)
 {
-    int covered_counter;
+    int covered_counter = 0;
     int sum = 0;
     int new_sum = 0;
     
     sum = links_sum(num);
+    //printf("lins sum: %d\n", sum);
     while(sum != 0){
         covered_counter += get_one_link_nodes_number(num);
         //printf("covered_counter after one link: %d\n", covered_counter);
         covered_counter += get_optimal_nodes_number(num);
         //printf("covered_nods_counter: %d\n", covered_counter);
         new_sum = links_sum(num);
+        //printf("lins sum: %d\n", sum);
         if(new_sum == sum){
-//           print_cell(num);
-//           print_edges(num);
+           print_cell(num);
+           print_edges(num);
             break_the_graph(num);
             covered_counter += 1;
- //          print_cell(num);
- //          print_edges(num);
+          print_cell(num);
+           print_edges(num);
             //printf("graph loop encountered\n");
             //break;
         }
         sum = new_sum;
     }
     
+    //printf("count: %d\n", covered_counter);
     return covered_counter;
 }
 
@@ -314,6 +317,7 @@ int get_results()
     num = read_data();
 
     sum = get_standalone_nodes_number(num);
+    //printf("standalone node: %d\n", sum);
     sum += get_covered_linked_nodes_number(num);
 
     return sum;
