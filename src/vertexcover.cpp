@@ -80,6 +80,16 @@ void init_env(int num){
     }
 }
 
+void print_edges(int num)
+{
+    int i, j;
+    printf("edges number: %d\n", num);
+    for(i=1; i<=num; i++) {
+        printf("%d ", edges[i]);
+    }
+    printf("\n");
+}
+
 void print_cell(int num)
 {
     int i, j;
@@ -105,7 +115,6 @@ int parse_data(int num, int links){
 int read_data(void)
 {
     int num;
-    int links_num = 0;
     char buf[1024];
 
     memset(buf, 0, sizeof(buf));
@@ -116,8 +125,7 @@ int read_data(void)
     init_graph(num);
     init_env(num);
 
-    links_num = read_links(buf, num);
-    print_cell(num);
+    read_links(buf, num);
 
     return num;
 }
@@ -125,20 +133,17 @@ int read_data(void)
 int read_data(char * data)
 {
     int num;
-    int links_num = 0;
     char *buf = data;
 
     num = atoi(buf);
     init_graph(num);
     init_env(num);
 
-    links_num = read_links(buf, num);
-    print_cell(num);
+    read_links(buf, num);
 
     return num;
 }
 #endif
-
 
 int get_standalone_nodes_number(int num){
     int count = 0;
@@ -151,8 +156,35 @@ int get_standalone_nodes_number(int num){
     return count;
 }
 
+void remove_the_link(int i, int j){
+    graph[i][j] = 0;
+    graph[j][i] = 0; 
+    edges[i] --;
+    edges[j] --;
+}
+
+bool find_link_another_node_and_remove(int j, int num){
+    for(int i=1; i<= num; i++){
+        if((graph[j][i] == 1) && (edges[i] == 1)){
+            remove_the_link(i, j);
+            return true;
+        }
+    }
+    return false;
+}
+
 int get_one_link_nodes_number(int num){
-    return 0;
+    int j;
+    int count = 0;
+
+    for(int i=1; i<=num; i++){
+        if(edges[i] == 1){ 
+            if(find_link_another_node_and_remove(i, num)){
+                count ++;
+            }
+        }
+    }
+    return count;
 }
 
 #ifndef __UT__

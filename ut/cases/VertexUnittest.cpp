@@ -38,6 +38,27 @@ TEST_F(Question5Test, Get_standalone_nodes_number_Successful3) {
 
     EXPECT_EQ(get_standalone_nodes_number(num), 0);
 }
+
+TEST_F(Question5Test, Get_one_link_nodes_number_Successful) {
+    int num;
+    num = read_data("4 1 2 3 4");
+
+    EXPECT_EQ(get_one_link_nodes_number(num), 2);
+}
+
+TEST_F(Question5Test, Get_one_link_nodes_number_Successful1) {
+    int num;
+    num = read_data("4 1 2");
+
+    EXPECT_EQ(get_one_link_nodes_number(num), 1);
+}
+
+TEST_F(Question5Test, Get_one_link_nodes_number_Successful3) {
+    int num;
+    num = read_data("8 1 2 5 6 2 7 3 8 1 6 4 5");
+
+    EXPECT_EQ(get_one_link_nodes_number(num), 1);
+}
 /*
 TEST_F(Question5Test, Get_one_link_nodes_number_Successful) {
     int num;
