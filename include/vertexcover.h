@@ -1,7 +1,7 @@
 #ifndef __VERTEX_H__
 #define __VERTEX_H__
 
-#define MAX_NODE 101
+#define MAX_NODE 10240
 #define INDEBUG 0
 
 extern int edges[MAX_NODE];

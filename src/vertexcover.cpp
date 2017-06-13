@@ -114,7 +114,7 @@ int parse_data(int num, int links){
 int read_data(void)
 {
     int num;
-    char buf[1024];
+    char buf[809200];
 
     memset(buf, 0, sizeof(buf));
 
@@ -292,12 +292,12 @@ int get_covered_linked_nodes_number(int num)
         new_sum = links_sum(num);
         //printf("lins sum: %d\n", sum);
         if(new_sum == sum){
-           print_cell(num);
-           print_edges(num);
+           //print_cell(num);
+           //print_edges(num);
             break_the_graph(num);
             covered_counter += 1;
-          print_cell(num);
-           print_edges(num);
+          //print_cell(num);
+          // print_edges(num);
             //printf("graph loop encountered\n");
             //break;
         }
