@@ -21,13 +21,18 @@ int read_links(char *buf, int num)
     int a, b;
     char * p = buf;
     int count = 0;
+    p = strchr(buf, ' ');
+    if(!p){
+        return 0;
+    }
+    p = p+1;
 
     while(p != NULL) {
         a = atoi(p);
         p = strchr(p, ' ') + 1;
         b = atoi(p);
         //printf("%d, %d\n", a, b);
-        graph[min(a, b)][max(a,b)]=1;
+        graph[a][b] = graph[b][a] = 1;
         edges[a]++;
         edges[b]++;
         count ++;
@@ -53,23 +58,22 @@ bool nodigit(char *p)
     return true;
 }
 
-void init_graph(void){
+void init_graph(int num){
 
-    for (int i=0; i<= n; i++) {
-        for (int j=0; j<= n; j++) {
+    for (int i=0; i<= num; i++) {
+        for (int j=0; j<= num; j++) {
             graph[i][j]=0;
         }
     }
 }
 
-void init_env(void){
-    int n = MAX_NODE;
+void init_env(int num){
 
     memset(edges, 0, sizeof(edges));
     memset(state, 0, sizeof(state));
     memset(nodes, 0, sizeof(nodes));
 
-    for (int i=0; i<= n; i++) {
+    for (int i=0; i <= num; i++) {
         edges[i]=0;
         state[i]=0;
         nodes[i]=i;
@@ -97,7 +101,8 @@ int parse_data(int num, int links){
 }
 */
 
-int parse_data(void)
+#ifndef __UT__
+int read_data(void)
 {
     int num;
     int links_num = 0;
@@ -107,26 +112,51 @@ int parse_data(void)
 
     fgets(buf, sizeof(buf), stdin);
 
-    printf("buf: %s", buf);
-    init_graph();
-    init_env();
-
     num = atoi(buf);
-    printf("num: %d\n", num);
+    init_graph(num);
+    init_env(num);
 
-    links_num = read_links(strchr(buf, ' ') + 1, num);
+    links_num = read_links(buf, num);
     print_cell(num);
 
- //   parse_data(num, links_num);
     return num;
 }
+#else
+int read_data(char * data)
+{
+    int num;
+    int links_num = 0;
+    char *buf = data;
 
+    num = atoi(buf);
+    init_graph(num);
+    init_env(num);
+
+    links_num = read_links(buf, num);
+    print_cell(num);
+
+    return num;
+}
+#endif
+
+
+int get_standalone_nodes_number(int num){
+    int count = 0;
+
+    for(int i=1; i<=num; i++){
+        if(edges[i] == 0){ 
+            count ++;
+        }
+    }
+    return count;
+}
+
+int get_one_link_nodes_number(int num){
+    return 0;
+}
 
 #ifndef __UT__
 int main() {
-#else
-int main_func(){
-#endif
     int i;
     int case_num;
     int num = 0;
@@ -134,9 +164,10 @@ int main_func(){
     scanf("%d\n", &case_num);
 
     for(i=0; i<case_num; i++) {
-        num = parse_data();
+        num = read_data();
         printf("Case #%d: %d\n", i+1, num);
     }
 
     return 0;
 }
+#endif
