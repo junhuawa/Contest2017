@@ -11,8 +11,8 @@ test2: ../src/question2.c
 test4: ../src/question4.cpp
 	gcc -o test4 $^ -Wall -I../include/ -lstdc++
 
-test5: ../src/question5.c
-	gcc -o test5 $^ -Wall -I../include/
+test5: ../src/vertexcover.cpp
+	g++ -o test5 $^ -Wall -I../include/ -lstdc++
 
 .PHONY: clean
 clean: 
