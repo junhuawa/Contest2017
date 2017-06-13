@@ -217,25 +217,59 @@ int remove_links_of(int j, int num, int backup[]){
 int get_optimal_nodes_number(int num){
     int j;
     int count = 0;
-    int links_count = 0;
+    //int links_count = 0;
     int backup[num + 1];
     memcpy(backup, edges, sizeof(backup));
 
     for(int i=1; i<=num; i++){
-        print_cell(num);
-        print_edges(num);
+        //print_cell(num);
+        //print_edges(num);
         if(edges[i] == 1){ 
             j = find_link_another_node(i, num);
             if( j == 0) continue;
-            links_count = remove_links_of(j, num, backup);
-            print_edges(num);
-            printf("i: %d Removed links of node: %d, links num: %d\n", i, j, links_count);
+            remove_links_of(j, num, backup);
+            //links_count = remove_links_of(j, num, backup);
+            //print_edges(num);
+            //printf("i: %d Removed links of node: %d, links num: %d\n", i, j, links_count);
             count ++;
         }
-        printf("count: %d\n", count);
+        //printf("count: %d\n", count);
     }
     memcpy(edges, backup, sizeof(backup));
     return count;
+}
+
+int links_sum(int num){
+    int sum = 0;
+
+    for(int i=1; i<=num; i++){
+        sum += edges[i];
+    }
+
+    return sum;
+}
+
+int get_covered_linked_nodes_number(int num)
+{
+    int covered_counter;
+    int sum = 0;
+    int new_sum = 0;
+    
+    sum = links_sum(num);
+    while(sum != 0){
+        covered_counter += get_one_link_nodes_number(num);
+        printf("covered_counter after one link: %d\n", covered_counter);
+        covered_counter += get_optimal_nodes_number(num);
+        printf("covered_nods_counter: %d\n", covered_counter);
+        new_sum = links_sum(num);
+        if(new_sum == sum){
+            printf("graph loop encountered\n");
+            break;
+        }
+        sum = new_sum;
+    }
+    
+    return covered_counter;
 }
 
 #ifndef __UT__
