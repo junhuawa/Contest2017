@@ -124,3 +124,24 @@ TEST_F(Question5Test, brute_force1) {
 
     EXPECT_EQ(get_covered_linked_nodes_number_by_brute_force(num), 2);
 }
+
+TEST_F(Question5Test, brute_force2) {
+    int num;
+    num = read_data("10 2 3 3 4 4 5 5 2 8 9 9 10 10 8");
+
+    EXPECT_EQ(get_covered_linked_nodes_number_by_brute_force(num), 3);
+}
+
+TEST_F(Question5Test, brute_force3) {
+    int num;
+    num = read_data("12 2 3 3 4 4 5 5 2 8 9 9 10 10 8 5 12 4 11");
+
+    EXPECT_EQ(get_covered_linked_nodes_number_by_brute_force(num), 3);
+}
+
+TEST_F(Question5Test, brute_force4) {
+    int num;
+    num = read_data("13 2 3 3 4 4 5 5 2 8 9 9 10 10 8 5 12 4 11");
+
+    EXPECT_EQ(get_covered_linked_nodes_number_by_brute_force(num), 3);
+}
