@@ -14,9 +14,8 @@ enum statetype{
 };
 
 int8_t graph[MAX_NODE][MAX_NODE];//int -> int8_t
-int edges[MAX_NODE], nodes[MAX_NODE], state[MAX_NODE];
-
-int t,m,n,k,a,b;
+int edges[MAX_NODE], state[MAX_NODE];
+int nodes_covered[MAX_NODE];
 
 bool nodigit(char *p);
 int read_links(char *buf, int num)
@@ -79,12 +78,12 @@ void init_env(int num){
 
     memset(edges, 0, sizeof(edges));
     memset(state, 0, sizeof(state));
-    memset(nodes, 0, sizeof(nodes));
+
+    memset(nodes_covered, 0, sizeof(nodes_covered));
 
     for (int i=0; i <= num; i++) {
         edges[i]=0;
         state[i]=0;
-        nodes[i]=i;
     }
 }
 
@@ -353,10 +352,97 @@ int revmove_links_already_covered(int num){
     return count;
 }
 
+int save_all_nodes(int nodes[], int num){
+    int count = 0;
+    for(int i=1; i<=num; i++){
+        if(edges[i] > 0){
+            nodes[count] = i; 
+            count ++;
+        }
+    }
+    return count;
+}
+
+bool all_nodes_covered(int nodes[], int nodes_num){
+
+    for(int i=0; i<nodes_num; i++){
+        if(nodes_covered[nodes[i]] == UNCOVERED){
+            return false;
+        }
+    }
+    return true;
+}
+
+void color_node(int index, int num){
+    nodes_covered[index] = COVERED;
+
+    for(int i=1; i<=num; i++){
+        if(graph[index][i] == 1){
+            nodes_covered[i] = COVERED;
+        }
+    }
+
+    for(int i=1; i<=num; i++){
+        if(graph[i][index] == 1){
+            nodes_covered[i] = COVERED;
+        }
+    }
+}
+
+void color_the_nodes(int iter, int nodes[], int remain_nodes_num, int num){
+
+    for(int i=0; i<remain_nodes_num; i++){
+        if((iter & (1 << i)) == 1<<i){
+            //printf("iter: %d, color nodes %d, realnode: %d\n", iter, i, nodes[i]);
+           color_node(nodes[i], num); 
+        }
+    }
+}
+
+int get_covered_nodes_num(int iter, int nodes_num)
+{
+    int count = 0;
+
+    for(int i=0; i<nodes_num; i++){
+        if((iter & (1 << i)) == (1<<i)){
+            count ++;
+        }
+    }
+    return count;
+}
+
+void print_nodes_covered(int nodes[], int remain_nodes_num){
+
+    for(int i=0; i<remain_nodes_num; i++){
+        printf("node: %d, %c\n", nodes[i], nodes_covered[nodes[i]] == COVERED? 'C': ' ');
+    }
+}
+
 int get_covered_linked_nodes_number_by_brute_force(int num){
+    int remain_nodes[20];
+    int remain_nodes_num = 0;
+    int iter = 0;
+    int least = 0;
 
+    memset(remain_nodes, 0, sizeof(int));
+    remain_nodes_num = save_all_nodes(remain_nodes, num);
+    //printf("remain_nodes_num: %d\n", remain_nodes_num);
+    
+    least = remain_nodes_num;
+    while(iter < (1<<remain_nodes_num) -1){
+        //printf("iter: %d\n", iter);
+        iter ++;
+        memset(nodes_covered, 0, sizeof(nodes_covered));
+        color_the_nodes(iter, remain_nodes, remain_nodes_num, num);
+        //print_nodes_covered(remain_nodes, remain_nodes_num);
+        if(all_nodes_covered(remain_nodes, remain_nodes_num)){
+            if(least > get_covered_nodes_num(iter, remain_nodes_num)){
+                least = get_covered_nodes_num(iter, remain_nodes_num);
+            }
+        }
+    }
 
-    return 0;
+    return least;
 }
 
 int get_covered_linked_nodes_number(int num)
@@ -372,20 +458,22 @@ int get_covered_linked_nodes_number(int num)
         covered_counter += get_one_link_nodes_number(num);
         //printf("covered_counter after one link: %d\n", covered_counter);
         covered_counter += get_optimal_nodes_number(num);
+        revmove_links_already_covered(num);
         //printf("covered_nods_counter: %d\n", covered_counter);
         //print_cell(num);
         new_sum = links_sum(num);
         //printf("lins sum: %d\n", sum);
         if(new_sum == sum){
-            print_links(num);
+            //print_links(num);
+            covered_counter += get_covered_linked_nodes_number_by_brute_force(num);
            //print_cell(num);
            //print_edges(num);
-            break_the_graph(num);
+            //break_the_graph(num);
             //covered_counter += 1;
           //print_cell(num);
           //print_edges(num);
             //printf("graph loop encountered\n");
-            //break;
+            break;
         }
         sum = new_sum;
     }
