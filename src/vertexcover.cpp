@@ -43,6 +43,7 @@ int read_links(char *buf, int num)
             break;
         }
     }
+    //printf("count: %d\n", count);
     return count;
 }
 
@@ -93,9 +94,19 @@ void print_cell(int num)
 {
     int i, j;
     printf("cell: %d\n", num);
+    printf("    ");
+    for(int i=1; i<=num; i++){
+        printf("%d ", i%10); 
+    }
+    printf("\n");
     for(i=1; i<=num; i++) {
+        printf("%2d: ", i);
         for(j=1; j<=num; j++) {
-            printf("%d ", graph[i][j]);
+            if(graph[i][j] == 1) {
+                printf("%d ", 1);
+            } else if(graph[i][j] == 0){
+                printf("  "); 
+            }
         }
         printf("\n");
     }
@@ -147,11 +158,14 @@ int read_data(char * data)
 int get_standalone_nodes_number(int num){
     int count = 0;
 
+//    printf("standalone: \n");
     for(int i=1; i<=num; i++){
         if(edges[i] == 0){ 
+ //           printf("i: %d ", i);
             count ++;
         }
     }
+  //  printf("\n");
     return count;
 }
 
@@ -204,6 +218,7 @@ int get_one_link_nodes_number(int num){
 int remove_links_of(int j, int num, int backup[]){
     int count = 0;
 
+    printf("remove : %d\n", j);
     for(int i=1; i<= num; i++){
 
         if(graph[i][j] == 1){
@@ -282,13 +297,15 @@ int get_covered_linked_nodes_number(int num)
     int sum = 0;
     int new_sum = 0;
     
+    print_cell(num);
     sum = links_sum(num);
     //printf("lins sum: %d\n", sum);
     while(sum != 0){
         covered_counter += get_one_link_nodes_number(num);
-        //printf("covered_counter after one link: %d\n", covered_counter);
+        printf("covered_counter after one link: %d\n", covered_counter);
         covered_counter += get_optimal_nodes_number(num);
-        //printf("covered_nods_counter: %d\n", covered_counter);
+        printf("covered_nods_counter: %d\n", covered_counter);
+        print_cell(num);
         new_sum = links_sum(num);
         //printf("lins sum: %d\n", sum);
         if(new_sum == sum){
@@ -297,8 +314,8 @@ int get_covered_linked_nodes_number(int num)
             break_the_graph(num);
             covered_counter += 1;
           //print_cell(num);
-          // print_edges(num);
-            //printf("graph loop encountered\n");
+          //print_edges(num);
+            printf("graph loop encountered\n");
             //break;
         }
         sum = new_sum;
@@ -317,7 +334,7 @@ int get_results()
     num = read_data();
 
     sum = get_standalone_nodes_number(num);
-    //printf("standalone node: %d\n", sum);
+    printf("standalone node: %d\n", sum);
     sum += get_covered_linked_nodes_number(num);
 
     return sum;
@@ -331,6 +348,7 @@ int main() {
     scanf("%d\n", &case_num);
 
     for(i=0; i<case_num; i++) {
+        //printf("Case: %d\n", i+1);
         sum = get_results();
         printf("Case #%d: %d\n", i+1, sum);
     }
