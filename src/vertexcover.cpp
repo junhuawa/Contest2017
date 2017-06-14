@@ -432,7 +432,7 @@ int get_covered_linked_nodes_number_by_brute_force(int num){
     while(iter < (1<<remain_nodes_num) -1){
         //printf("iter: %d\n", iter);
         iter ++;
-        memset(nodes_covered, 0, sizeof(nodes_covered));
+        memcpy(nodes_covered, state, sizeof(nodes_covered));
         color_the_nodes(iter, remain_nodes, remain_nodes_num, num);
         //print_nodes_covered(remain_nodes, remain_nodes_num);
         if(all_nodes_covered(remain_nodes, remain_nodes_num)){

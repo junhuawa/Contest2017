@@ -145,3 +145,14 @@ TEST_F(Question5Test, brute_force4) {
 
     EXPECT_EQ(get_covered_linked_nodes_number_by_brute_force(num), 3);
 }
+
+TEST_F(Question5Test, brute_force5) {
+    int num;
+    int lstate[] = {0, 0, 1, 1, 0, 0, 1};
+    num = read_data("6 2 3 1 5 1 4 3 5 2 6 3 4");
+
+    EXPECT_EQ(get_optimal_nodes_number(num), 1);
+    EXPECT_EQ(revmove_links_already_covered(num), 0);
+    memcmp(lstate, state, sizeof(lstate));
+    EXPECT_EQ(get_covered_linked_nodes_number_by_brute_force(num), 1);
+}
