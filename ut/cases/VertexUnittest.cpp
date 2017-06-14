@@ -96,3 +96,28 @@ TEST_F(Question5Test, break_the_graph_success) {
 
     EXPECT_EQ(node_num, 2);
 }
+
+TEST_F(Question5Test, Get_links_already_covered_success) {
+    int num;
+    int lstate[] = {0, 1, 1, 1, 1, 1, 1};
+
+    num = read_data("6 1 2 2 3 1 4 4 5 5 6");
+    //print_cell(num);
+
+    EXPECT_EQ(get_optimal_nodes_number(num), 2);
+    EXPECT_EQ(revmove_links_already_covered(num), 1);
+    EXPECT_EQ(memcmp(state, lstate, sizeof(lstate)), 0);
+    //print_cell(num);
+}
+
+/*
+TEST_F(Question5Test, brute_force_get_covered_linked_nodes_success) {
+    int num;
+    int node_num;
+
+    num = read_data("4 1 2 2 3 4 3 1 3");
+    node_num = get_covered_linked_nodes_number_by_brute_force(num);
+
+    EXPECT_EQ(node_num, 2);
+}
+*/

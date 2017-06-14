@@ -8,6 +8,10 @@
 #include "vertexcover.h"
 using namespace std;
 
+enum statetype{
+    UNCOVERED,
+    COVERED
+};
 
 int8_t graph[MAX_NODE][MAX_NODE];//int -> int8_t
 int edges[MAX_NODE], nodes[MAX_NODE], state[MAX_NODE];
@@ -58,6 +62,10 @@ bool nodigit(char *p)
     return true;
 }
 
+bool is_covered(int i){
+    return state[i] == COVERED;
+}
+
 void init_graph(int num){
 
     for (int i=0; i<= num; i++) {
@@ -86,6 +94,20 @@ void print_edges(int num)
     printf("edges number: %d\n", num);
     for(i=1; i<=num; i++) {
         printf("%d ", edges[i]);
+    }
+    printf("\n");
+}
+
+void print_links(int num)
+{
+    int i;
+    printf("links: %d\n", num);
+    for(i=1; i<=num; i++) {
+        for(int j=i+1; j<=num; j++){
+            if(graph[i][j] == 1){
+                printf("(%d %d)", i, j);
+            }
+        }
     }
     printf("\n");
 }
@@ -155,6 +177,10 @@ int read_data(char * data)
 }
 #endif
 
+void cover_node(int i){
+    state[i] = COVERED;
+}
+
 int get_standalone_nodes_number(int num){
     int count = 0;
 
@@ -163,6 +189,7 @@ int get_standalone_nodes_number(int num){
         if(edges[i] == 0){ 
  //           printf("i: %d ", i);
             count ++;
+            cover_node(i);
         }
     }
   //  printf("\n");
@@ -196,6 +223,8 @@ bool find_link_another_node_and_remove(int j, int num){
     for(int i=1; i<= num; i++){
         if((graph[j][i] == 1) && (edges[i] == 1)){
             remove_the_link_immediate(i, j);
+            cover_node(i);
+            cover_node(j);
             return true;
         }
     }
@@ -215,15 +244,35 @@ int get_one_link_nodes_number(int num){
     return count;
 }
 
+int remove_one_link(int i, int num)
+{
+    int j = 0;
+
+    for(j=1; j<=num; j++){
+        if(graph[i][j] == 1){
+            //printf("link between %d and %d found\n", i, j);
+            break;
+        }
+    }
+
+    graph[i][j] = graph[j][i]= 0;
+    edges[i] --;
+    edges[j] --;
+    //printf("remove link betwen %d and %d\n", i, j);
+    return 0;
+}
+
 int remove_links_of(int j, int num, int backup[]){
     int count = 0;
 
-    printf("remove : %d\n", j);
+    cover_node(j);
+    //printf("remove : %d\n", j);
     for(int i=1; i<= num; i++){
 
         if(graph[i][j] == 1){
             remove_the_link_in_backup(i, j, backup);
             count ++;
+            cover_node(i);
         }
     }
     return count;
@@ -280,14 +329,33 @@ int find_node_with_max_links(int num){
 int break_the_graph(int num)
 {
     int i;
-    int backup[num + 1];
-
-    memcpy(backup, edges, sizeof(backup));
 
     i = find_node_with_max_links(num);
-    remove_links_of(i, num, backup);
+    remove_one_link(i, num);
 
-    memcpy(edges, backup, sizeof(backup));
+    return 0;
+}
+
+int revmove_links_already_covered(int num){
+    int count = 0;
+    for(int i=1; i<=num; i++){
+        for(int j=i; j<=num; j++){
+            if(graph[i][j] == 1){
+                if(is_covered(i) && is_covered(j)) {
+                    graph[i][j] = graph[j][i] = 0;
+                    edges[i] --;
+                    edges[j] --;
+                    count ++;
+                }
+            }
+        }
+    }
+    return count;
+}
+
+int get_covered_linked_nodes_number_by_brute_force(int num){
+
+
     return 0;
 }
 
@@ -297,25 +365,26 @@ int get_covered_linked_nodes_number(int num)
     int sum = 0;
     int new_sum = 0;
     
-    print_cell(num);
+    //print_cell(num);
     sum = links_sum(num);
     //printf("lins sum: %d\n", sum);
     while(sum != 0){
         covered_counter += get_one_link_nodes_number(num);
-        printf("covered_counter after one link: %d\n", covered_counter);
+        //printf("covered_counter after one link: %d\n", covered_counter);
         covered_counter += get_optimal_nodes_number(num);
-        printf("covered_nods_counter: %d\n", covered_counter);
-        print_cell(num);
+        //printf("covered_nods_counter: %d\n", covered_counter);
+        //print_cell(num);
         new_sum = links_sum(num);
         //printf("lins sum: %d\n", sum);
         if(new_sum == sum){
+            print_links(num);
            //print_cell(num);
            //print_edges(num);
             break_the_graph(num);
-            covered_counter += 1;
+            //covered_counter += 1;
           //print_cell(num);
           //print_edges(num);
-            printf("graph loop encountered\n");
+            //printf("graph loop encountered\n");
             //break;
         }
         sum = new_sum;
@@ -334,7 +403,7 @@ int get_results()
     num = read_data();
 
     sum = get_standalone_nodes_number(num);
-    printf("standalone node: %d\n", sum);
+    //printf("standalone node: %d\n", sum);
     sum += get_covered_linked_nodes_number(num);
 
     return sum;
