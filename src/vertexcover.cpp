@@ -33,7 +33,6 @@ int read_links(char *buf, int num)
         a = atoi(p);
         p = strchr(p, ' ') + 1;
         b = atoi(p);
-        //printf("%d, %d\n", a, b);
         graph[a][b] = graph[b][a] = 1;
         edges[a]++;
         edges[b]++;
@@ -46,7 +45,6 @@ int read_links(char *buf, int num)
             break;
         }
     }
-    //printf("count: %d\n", count);
     return count;
 }
 
@@ -66,25 +64,14 @@ bool is_covered(int i){
 }
 
 void init_graph(int num){
-
-    for (int i=0; i<= num; i++) {
-        for (int j=0; j<= num; j++) {
-            graph[i][j]=0;
-        }
-    }
+    memset(graph, UNCOVERED, sizeof(graph));
 }
 
 void init_env(int num){
-
     memset(edges, 0, sizeof(edges));
     memset(state, 0, sizeof(state));
 
     memset(nodes_covered, 0, sizeof(nodes_covered));
-
-    for (int i=0; i <= num; i++) {
-        edges[i]=0;
-        state[i]=0;
-    }
 }
 
 void print_edges(int num)
@@ -111,7 +98,7 @@ void print_links(int num)
     printf("\n");
 }
 
-void print_cell(int num)
+void print_graph(int num)
 {
     int i, j;
     printf("cell: %d\n", num);
@@ -133,14 +120,15 @@ void print_cell(int num)
     }
 }
 
-/*
-int parse_data(int num, int links){
-    int k = 2;
-    bool flag = false;
+void print_state(int num){
 
-    return 0;
+    printf("state: ");
+    for(int i=1; i<= num; i++){
+        printf("%d ", state[i]);
+    
+    }
+    printf("\n");
 }
-*/
 
 #ifndef __UT__
 int read_data(void)
@@ -183,15 +171,12 @@ void cover_node(int i){
 int get_standalone_nodes_number(int num){
     int count = 0;
 
-    //printf("standalone: \n");
     for(int i=1; i<=num; i++){
         if((edges[i] == 0) && (state[i] == UNCOVERED)){ 
-            //printf("i: %d ", i);
             count ++;
             cover_node(i);
         }
     }
-    //printf("\n");
     return count;
 }
 
@@ -281,37 +266,21 @@ int remove_links_of(int j, int num, int backup[]){
 int get_optimal_nodes_number(int num){
     int j;
     int count = 0;
-    int links_count = 0;
     int backup[num + 1];
     memcpy(backup, edges, sizeof(backup));
 
     for(int i=1; i<=num; i++){
-        //print_cell(num);
-        //print_edges(num);
         if(edges[i] == 1){ 
             j = find_link_another_node(i, num);
             if( j == 0) continue;
-            //remove_links_of(j, num, backup);
-            links_count = remove_links_of(j, num, backup);
-            //print_edges(num);
-            //printf("i: %d Removed links of node: %d, links num: %d\n", i, j, links_count);
+            remove_links_of(j, num, backup);
             count ++;
         }
-        //printf("count: %d\n", count);
     }
     memcpy(edges, backup, sizeof(backup));
     return count;
 }
 
-void print_state(int num){
-
-    printf("state: ");
-    for(int i=1; i<= num; i++){
-        printf("%d ", state[i]);
-    
-    }
-    printf("\n");
-}
 
 bool is_all_nodes_covered(int num){
 
@@ -488,50 +457,33 @@ int get_covered_linked_nodes_number_by_brute_force(int num){
 
 int get_covered_linked_nodes_number(int num)
 {
-    int covered_counter = 0;
+    int deploy_number = 0;
     bool flag = false;
     int new_sum = 0;
     int sum = 0;
     
-    //print_cell(num);
     flag = is_all_nodes_covered(num);
     new_sum = links_sum(num);
-    //printf("lins sum: %d\n", sum);
     while(!flag){
-        covered_counter += get_standalone_nodes_number(num);
-        //printf("covered_counter after get standalone nodes: %d\n", covered_counter);
-        covered_counter += get_one_link_nodes_number(num);
-        //printf("covered_counter after one link: %d\n", covered_counter);
-        covered_counter += get_optimal_nodes_number(num);
-        //printf("covered_counter after get optimal nodes: %d\n", covered_counter);
+        deploy_number += get_standalone_nodes_number(num);
+        deploy_number += get_one_link_nodes_number(num);
+        deploy_number += get_optimal_nodes_number(num);
+
         remove_links_already_covered(num);
         remove_nodes_already_covered(num);
-        //print_links(num);
-        covered_counter += get_standalone_nodes_number(num);
-        //printf("covered_nods_counter: %d\n", covered_counter);
-        //print_cell(num);
-        flag = is_all_nodes_covered(num);
-/*        if(flag){
-            printf("all covered\n");
-        //    break;
-        }
-        */
+
+        deploy_number += get_standalone_nodes_number(num);
+
         new_sum = links_sum(num);
-        //printf("lins sum: %d\n", sum);
         if(new_sum == sum){
-            //print_links(num);
-            covered_counter += get_covered_linked_nodes_number_by_brute_force(num);
-            //printf("covered_counter after brute force: %d\n", covered_counter);
-            //print_cell(num);
-            //print_edges(num);
-            //printf("graph loop encountered\n");
+            deploy_number += get_covered_linked_nodes_number_by_brute_force(num);
             break;
         }
         sum = new_sum;
+        flag = is_all_nodes_covered(num);
     }
     
-    //printf("count: %d\n", covered_counter);
-    return covered_counter;
+    return deploy_number;
 }
 
 
@@ -540,23 +492,20 @@ int get_results()
 {
     int sum = 0;
     int num = 0;
-    num = read_data();
 
-    //printf("standalone node: %d\n", sum);
+    num = read_data();
     sum += get_covered_linked_nodes_number(num);
 
     return sum;
 }
 
 int main() {
-    int i;
     int case_num;
     int sum = 0;
 
     scanf("%d\n", &case_num);
 
-    for(i=0; i<case_num; i++) {
-        //printf("Case: %d\n", i+1);
+    for(int i=0; i<case_num; i++) {
         sum = get_results();
         printf("Case #%d: %d\n", i+1, sum);
     }
