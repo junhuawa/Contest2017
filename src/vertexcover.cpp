@@ -234,7 +234,6 @@ int remove_one_link(int i, int num)
 
     for(j=1; j<=num; j++){
         if(graph[i][j] == 1){
-            //printf("link between %d and %d found\n", i, j);
             break;
         }
     }
@@ -243,7 +242,6 @@ int remove_one_link(int i, int num)
     edges[i] --;
     edges[j] --;
 
-    //printf("remove link betwen %d and %d\n", i, j);
     return 0;
 }
 
@@ -251,7 +249,6 @@ int remove_links_of(int j, int num, int backup[]){
     int count = 0;
 
     cover_node(j);
-    //printf("remove : %d\n", j);
     for(int i=1; i<= num; i++){
 
         if(graph[i][j] == 1){
@@ -284,15 +281,12 @@ int get_optimal_nodes_number(int num){
 
 bool is_all_nodes_covered(int num){
 
-    //print_state(num);
     for(int i=1; i<=num; i++){
         if(state[i] == UNCOVERED){
-            //printf("%d uncovered\n", i);
             return false;
         }
     }
 
-    //printf("covered\n");
     return true;
 }
 
@@ -319,22 +313,9 @@ int find_node_with_max_links(int num){
     return pos;
 }
 
-/*
-int break_the_graph(int num)
-{
-    int i;
-
-    i = find_node_with_max_links(num);
-    remove_one_link(i, num);
-
-    return 0;
-}
-*/
-
 int remove_nodes_already_covered(int num){
     int count = 0;
 
-    //print_edges(num);
     for(int i=1; i<=num; i++){
         if((state[i] == COVERED) && (edges[i] == 1)){
             remove_one_link(i, num);
@@ -354,7 +335,6 @@ int remove_links_already_covered(int num){
                     edges[i] --;
                     edges[j] --;
                     count ++;
-                    //printf("%d & %d already covered\n", i, j);
                 }
             }
         }
@@ -436,22 +416,18 @@ int get_covered_linked_nodes_number_by_brute_force(int num){
 
     memset(remain_nodes, 0, sizeof(int));
     remain_nodes_num = save_all_nodes(remain_nodes, num);
-    //printf("remain_nodes_num: %d\n", remain_nodes_num);
     
     least = remain_nodes_num;
     while(iter < (1<<remain_nodes_num) -1){
-        //printf("iter: %d\n", iter);
         iter ++;
         memcpy(nodes_covered, state, sizeof(nodes_covered));
         color_the_nodes(iter, remain_nodes, remain_nodes_num, num);
-        //print_nodes_covered(remain_nodes, remain_nodes_num);
         if(all_nodes_covered(remain_nodes, remain_nodes_num)){
             if(least > get_covered_nodes_num(iter, remain_nodes_num)){
                 least = get_covered_nodes_num(iter, remain_nodes_num);
             }
         }
     }
-
     return least;
 }
 
