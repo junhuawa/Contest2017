@@ -15,7 +15,8 @@ bool find_link_another_node_and_remove(int j, int num);
 int get_optimal_nodes_number(int num);
 int get_covered_linked_nodes_number(int num);
 int get_covered_linked_nodes_number_by_brute_force(int num);
-int revmove_links_already_covered(int num);
+int remove_links_already_covered(int num);
+int remove_nodes_already_covered(int num);
 
 int break_the_graph(int num);
 #endif

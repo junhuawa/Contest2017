@@ -82,7 +82,7 @@ TEST_F(Question5Test, Get_correct_nodes_number_to_cover) {
     int num;
     num = read_data("8 1 2 5 6 2 7 1 6 4 5");
 
-    EXPECT_EQ(get_covered_linked_nodes_number(num), 2);
+    EXPECT_EQ(get_covered_linked_nodes_number(num), 4);
 }
 
 TEST_F(Question5Test, break_the_graph_success) {
@@ -103,7 +103,7 @@ TEST_F(Question5Test, Get_links_already_covered_success) {
     //print_cell(num);
 
     EXPECT_EQ(get_optimal_nodes_number(num), 2);
-    EXPECT_EQ(revmove_links_already_covered(num), 1);
+    EXPECT_EQ(remove_links_already_covered(num), 1);
     EXPECT_EQ(memcmp(state, lstate, sizeof(lstate)), 0);
     //print_cell(num);
 }
@@ -152,7 +152,20 @@ TEST_F(Question5Test, brute_force5) {
     num = read_data("6 2 3 1 5 1 4 3 5 2 6 3 4");
 
     EXPECT_EQ(get_optimal_nodes_number(num), 1);
-    EXPECT_EQ(revmove_links_already_covered(num), 0);
+    EXPECT_EQ(remove_links_already_covered(num), 0);
     memcmp(lstate, state, sizeof(lstate));
     EXPECT_EQ(get_covered_linked_nodes_number_by_brute_force(num), 1);
+}
+
+TEST_F(Question5Test, need_to_remove_covered_nodes) {
+    int num;
+    int lstate[] = {0, 0, 0, 0, 0, 1, 1, 1};
+    int ledges[] = {0, 2, 3, 2, 1, 0, 0, 0};
+    num = read_data("7 1 2 2 3 1 3 2 4 4 5 5 6 6 7");
+
+    EXPECT_EQ(get_optimal_nodes_number(num), 1);
+    EXPECT_EQ(remove_links_already_covered(num), 0);
+    EXPECT_EQ(remove_nodes_already_covered(num), 1);
+    memcmp(lstate, state, sizeof(lstate));
+    memcmp(ledges, edges, sizeof(ledges));
 }
