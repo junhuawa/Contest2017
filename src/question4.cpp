@@ -20,7 +20,6 @@ int parent[DISTRICT_NUM];
 
 struct cmp{
     bool operator()(int v1, int v2){
-        //printf("cmp: %d, %d\n", dist[v1], dist[v2]);
         return dist[v1] > dist[v2];
     }
 };
@@ -114,14 +113,14 @@ void display_known_table(int num){
 void init_known_table(int num){
 
     for(int i=1; i<= num; i++){
-            known[i] = false;
+        known[i] = false;
     }
 }
 
 void init_dist_table(int num){
 
     for(int i=1; i<= num; i++){
-            dist[i] = MAX_DISTANCE;
+        dist[i] = MAX_DISTANCE;
     }
 }
 
@@ -155,18 +154,14 @@ int get_shortest_total_length(int num)
         for(int i = 1; i<num+1; i++){
             assert((known[i] == false) || (known[i] == true));
             if(!known[i]){
-               // if(dist[V] + weight[V][i] < dist[i]){
-                //    dist[i] = dist[V] + weight[V][i];
                 if(weight[V][i] < dist[i]){
                     dist[i] = weight[V][i];
-
-                    //printf("push id: %d, dist: %d, parent: %d\n", i, dist[i], V);
                     q.push(i);
                     parent[i] = V;
                 }
             }
         }
-        
+
         q.pop();
     }
     //show_distance(num);
@@ -205,7 +200,7 @@ int main_func4(void)
 
     scanf("%d\n", &link_num);
     insert_link(link_num);
-    
+
     printf("Case#%d: %d\n", case_num, get_shortest_total_length(num));
 
     return 0;

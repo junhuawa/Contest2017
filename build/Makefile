@@ -1,4 +1,4 @@
-all: test5 
+all: test5 test4
 #test1: ../src/question1.c
 #	gcc -o test1 $^ -Wall
 
